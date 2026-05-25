@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevPalette - Color Palette Generator</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .btn-primary {
+      @apply bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-colors font-medium;
+    }
+    .btn-secondary {
+      @apply bg-white text-gray-700 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors font-medium;
+    }
+    .card {
+      @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+    }
+    .color-swatch {
+      @apply rounded-lg shadow-md transition-transform duration-200 hover:scale-105 cursor-pointer overflow-hidden;
+    }
+    .input-field {
+      @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+  <div class="container mx-auto px-4 py-8 max-w-7xl">
+    
+    <!-- Header -->
+    <header class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">
+            <span class="text-primary-500">Dev</span>Palette
+          </h1>
+          <p class="text-gray-600 mt-1">Color palette generator for developers</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Left Panel - Controls -->
+      <div class="lg:col-span-1 space-y-6">
+        
+        <!-- Color Picker Card -->
+        <div class="card">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Base Color</h2>
+          
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <input type="color" id="colorPicker" 
+                     class="w-20 h-20 rounded-lg cursor-pointer border-4 border-white shadow-lg"
+                     value="#3b82f6">
+              
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Hex Color</label>
+                <div class="flex gap-2">
+                  <input type="text" id="hexInput" 
+                         class="input-field font-mono" 
+                         value="#3b82f6" maxlength="7">
+                  <button id="randomColor" class="btn-secondary whitespace-nowrap">
+                    Random
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Color Scheme</label>
+              <select id="schemeSelect" class="input-field">
+                <option value="analogous">Analogous</option>
+                <option value="complementary">Complementary</option>
+                <option value="triadic">Triadic</option>
+                <option value="monochromatic">Monochromatic</option>
+              </select>
+            </div>
+            
+            <button id="generateBtn" class="btn-primary w-full">
+              Generate Palette
+            </button>
+            
+            <div class="pt-4 border-t">
+              <button id="testConnection" class="btn-secondary w-full">
+                Test Backend Connection
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Debug Info -->
+        <div class="card">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Debug Info</h2>
+          <div id="debugInfo" class="text-sm space-y-2">
+            <div>JavaScript: <span id="jsStatus" class="text-green-600">Loading...</span></div>
+            <div>Backend: <span id="backendStatus" class="text-yellow-600">Checking...</span></div>
+            <div>Buttons: <span id="buttonsStatus" class="text-yellow-600">Checking...</span></div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Right Panel -->
+      <div class="lg:col-span-2">
+        <div class="card">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Color Palette</h2>
+          <div id="paletteContainer" class="grid grid-cols-5 gap-4">
+            <!-- Palette will appear here -->
+            <div class="color-swatch bg-primary-500">
+              <div class="h-32"></div>
+              <div class="p-4 text-white">
+                <div class="font-bold">#3b82f6</div>
+                <div class="text-sm">Initial Color</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="mt-12 pt-8 border-t border-gray-200 text-center text-gray-600 text-sm">
+      <p>DevPalette &copy; 2024 - A UI/UX Portfolio Project</p>
+    </footer>
+  </div>
+  
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-xl hidden">
+    <span id="toastMessage"></span>
+  </div>
+  
+  <!-- JavaScript - MUST BE BEFORE </body> -->
+  <script src="app.js"></script>
+  
+  <!-- Simple initialization script -->
+  <script>
+    console.log("Inline script loaded");
+    
+    // Update debug info
+    document.getElementById('jsStatus').textContent = 'Loaded ✓';
+    document.getElementById('jsStatus').className = 'text-green-600';
+    
+    // Test backend connection
+    document.getElementById('testConnection').addEventListener('click', async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/health');
+        const data = await response.json();
+        document.getElementById('backendStatus').textContent = 'Connected ✓';
+        document.getElementById('backendStatus').className = 'text-green-600';
+        alert(`Backend is running!\nStatus: ${data.status}\nService: ${data.service}`);
+      } catch (error) {
+        document.getElementById('backendStatus').textContent = 'Failed ✗';
+        document.getElementById('backendStatus').className = 'text-red-600';
+        alert('Backend connection failed. Make sure backend is running on port 8000.');
+      }
+    });
+  </script>
+</body>
+</html>
